@@ -113,17 +113,21 @@ func UninstallBins(pkg string, pkgConf *pkgparse.PkgConfig) error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("relbin paths %v \n", relbinPaths)
 	_, ver := utils.ParseStem(pkgVerStem)
 	renames, err := pkgConf.GetRenames()
 	if err != nil {
 		return err
 	}
+	fmt.Printf("renames %v \n", renames)
 	_, linkPaths, err := link.GetBinPathsAndLinkPaths(pkg, ver, relbinPaths, renames)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("linkPaths %v \n", linkPaths)
 	fmt.Printf("Removing %s links ...\n", color.CyanString(pkg))
 	for _, linkPath := range linkPaths {
+		fmt.Printf("- linkPath %v \n", linkPath)
 		err := os.Remove(linkPath)
 		if err != nil {
 			return err

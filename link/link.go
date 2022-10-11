@@ -26,9 +26,12 @@ func GetBinPathsAndLinkPaths(
 		binExt = ".exe"
 	}
 	stem := utils.CreateStem(pkg, ver)
+	fmt.Printf("stem %s \n", stem)
 	for _, confBinPath := range confBinPaths {
 		binPath := filepath.Join(utils.WebmanPkgDir, pkg, stem, confBinPath+binExt)
+		fmt.Printf("* %s ---> %s\n", confBinPath, binPath)
 		fileInfo, err := os.Stat(binPath)
+
 		// If config binary path points to a file
 		if err == nil && !fileInfo.IsDir() {
 			linkPath := GetLinkPathIfExec(binPath, renames)
@@ -46,7 +49,9 @@ func GetBinPathsAndLinkPaths(
 				if !entry.Type().IsDir() {
 					binPath := filepath.Join(binDir, entry.Name())
 					linkPath := GetLinkPathIfExec(binPath, renames)
+					fmt.Printf(" |__ %s \n", binPath)
 					if linkPath != nil {
+						fmt.Printf(" |__ %s ---> %s\n", binPath, *linkPath)
 						binPaths = append(binPaths, binPath)
 						linkPaths = append(linkPaths, *linkPath+binExt)
 					}
@@ -70,6 +75,7 @@ func GetLinkPathIfExec(binPath string, renames []pkgparse.RenameItem) *string {
 		binName = strings.ReplaceAll(binName, r.From, r.To)
 	}
 	linkPath := filepath.Join(utils.WebmanBinDir, binName)
+	fmt.Printf("bf=%s bn=%s lp=%s \n", binFile, binName, linkPath)
 	if utils.GOOS == "windows" {
 		switch filepath.Ext(binPath) {
 		case ".bat", ".exe", ".cmd":
@@ -88,6 +94,7 @@ func GetLinkPathIfExec(binPath string, renames []pkgparse.RenameItem) *string {
 			return nil
 		}
 	}
+	fmt.Printf("returning linkpath %s", linkPath)
 	return &linkPath
 }
 
